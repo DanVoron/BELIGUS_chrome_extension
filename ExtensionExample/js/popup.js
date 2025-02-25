@@ -35,6 +35,7 @@ async function GetPerks() {
 		}
 
 		const container = document.querySelector('.icon-container');
+		container.innerHTML = '';
 
 		const fetchPromises = perks.map(async (perk) => {
 			const response = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(perk.src)}`);
@@ -52,7 +53,7 @@ async function GetPerks() {
 
 		results.forEach(result => {
 			if (result.status === 'fulfilled') {
-				const { imageData, alt } = result.value;
+				const {imageData, alt} = result.value;
 
 				const perkDiv = document.createElement('div');
 				perkDiv.classList.add('perk-item', 'text-center', 'm-2');
@@ -107,7 +108,7 @@ function updateTimer(timerContainer) {
 		const days = Math.floor(timeDiffNext / (1000 * 60 * 60 * 24));
 		const hours = Math.floor((timeDiffNext % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
 		const minutes = Math.floor((timeDiffNext % (1000 * 60 * 60)) / (1000 * 60));
-		const seconds = Math.floor((timeDiffNext % (1000 * 60)) /  1000);
+		const seconds = Math.floor((timeDiffNext % (1000 * 60)) / 1000);
 
 		timerContainer.innerHTML = `Обновится через: ${days}д ${hours}ч ${minutes}м ${seconds}с`;
 	}
