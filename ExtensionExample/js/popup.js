@@ -3,13 +3,12 @@ async function GetPerks() {
 	try {
 		const response = await fetch('https://api.allorigins.win/get?url=https://nightlight.gg/shrine');
 
-		const errorContainer = document.querySelector('.error-messages'); // Находим элемент для ошибок
+		const errorContainer = document.querySelector('.error-messages');
 		errorContainer.innerHTML = '';
 
 		if (!response.ok) {
 			errorContainer.innerHTML = `Network response was not ok<br/>`;
 			throw new Error('Network response was not ok');
-
 		}
 
 		const jsonResponse = await response.json();
@@ -19,7 +18,6 @@ async function GetPerks() {
 		const doc = parser.parseFromString(html, 'text/html');
 
 		const perks = [];
-
 		const perkElements = doc.querySelectorAll('.cidahu3.perk_img');
 
 		perkElements.forEach(element => {
@@ -27,8 +25,6 @@ async function GetPerks() {
 			const alt = element.getAttribute('alt');
 			perks.push({src, alt});
 		});
-
-
 
 		const timerContainer = document.querySelector('.timer');
 		if (timerContainer) {
@@ -39,32 +35,50 @@ async function GetPerks() {
 		}
 
 		const container = document.querySelector('.icon-container');
-		for (const perk of perks) {
+
+		const fetchPromises = perks.map(async (perk) => {
 			const response = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(perk.src)}`);
+			if (!response.ok) {
+				throw new Error(`Failed to fetch image: ${perk.src}`);
+			}
 			const jsonResponse = await response.json();
-			const imageData = jsonResponse.contents;
+			return {
+				imageData: jsonResponse.contents,
+				alt: perk.alt
+			};
+		});
 
-			const perkDiv = document.createElement('div');
-			perkDiv.classList.add('perk-item', 'text-center', 'm-2');
+		const results = await Promise.allSettled(fetchPromises);
 
-			const img = document.createElement('img');
-			img.src = imageData;
-			img.alt = perk.alt;
+		results.forEach(result => {
+			if (result.status === 'fulfilled') {
+				const { imageData, alt } = result.value;
 
-			img.classList.add('dbd-images', 'img-fluid');
+				const perkDiv = document.createElement('div');
+				perkDiv.classList.add('perk-item', 'text-center', 'm-2');
 
-			const text = document.createElement('span');
-			text.textContent = perk.alt;
+				const img = document.createElement('img');
+				img.src = imageData;
+				img.alt = alt;
 
-			perkDiv.appendChild(img);
-			perkDiv.appendChild(text);
+				img.classList.add('dbd-images', 'img-fluid');
 
-			container.appendChild(perkDiv);
-		}
+				const text = document.createElement('span');
+				text.textContent = alt;
+
+				perkDiv.appendChild(img);
+				perkDiv.appendChild(text);
+
+				container.appendChild(perkDiv);
+			} else {
+				console.error('Error fetching perk image:', result.reason);
+				errorContainer.innerHTML += `Error fetching image: ${result.reason.message}<br/>`;
+			}
+		});
 
 	} catch (e) {
-		console.error('Error fetching perks:', error);
-		errorContainer.innerHTML = `Ошибка: ${error.message} <br/>`;
+		console.error('Error fetching perks:', e);
+		errorContainer.innerHTML = `Error fetching perks: ${e.message} <br/>`;
 	}
 }
 
@@ -92,8 +106,8 @@ function updateTimer(timerContainer) {
 
 		const days = Math.floor(timeDiffNext / (1000 * 60 * 60 * 24));
 		const hours = Math.floor((timeDiffNext % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-		const minutes = Math.floor ((timeDiffNext % (1000 * 60 * 60)) / (1000 * 60));
-		const seconds = Math.floor((timeDiffNext % (1000 * 60)) / 1000);
+		const minutes = Math.floor((timeDiffNext % (1000 * 60 * 60)) / (1000 * 60));
+		const seconds = Math.floor((timeDiffNext % (1000 * 60)) /  1000);
 
 		timerContainer.innerHTML = `Обновится через: ${days}д ${hours}ч ${minutes}м ${seconds}с`;
 	}
