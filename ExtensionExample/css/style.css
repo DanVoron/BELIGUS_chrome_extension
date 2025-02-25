@@ -1,15 +1,29 @@
-html,body{
+html, body {
 	padding: 4px;
 	margin: 0;
 	border-radius: 8px;
-	width: 400px;
+	width: 100vh;
 	background-color: #1F2023;
 	color: white;
 }
-.btn{
+
+.btn {
 	font-weight: 500;
+	background-color: #451D57;
+	outline: none;
+	border: none;
 }
-.main-container{
+
+.icon-container {
+	overflow: hidden;
+}
+
+.dbd-images {
+	width: 70px;
+	height: 70px;
+}
+
+.main-container {
 	width: 100%;
 
 }
