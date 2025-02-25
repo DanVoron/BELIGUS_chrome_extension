@@ -2,6 +2,12 @@ html,body{
 	padding: 4px;
 	margin: 0;
 	border-radius: 8px;
+	width: 400px;
+	background-color: #1F2023;
+	color: white;
+}
+.btn{
+	font-weight: 500;
 }
 .main-container{
 	width: 100%;

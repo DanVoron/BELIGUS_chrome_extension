@@ -19,6 +19,7 @@
   "options_page": "popup.html?options=1",
   "permissions": [
     "cookies",
+    "https://nightlight.gg/",
     "clipboardWrite",
     "storage",
     "activeTab",
@@ -32,9 +33,9 @@
   "background": {
     "service_worker": "./js/background.js"
   },
+  "web_accessible_resources": [],
   "content_scripts": [
     {
-
       "matches": ["https://act.hoyolab.com/*"],
       "js": [
         "./js/content.js"
